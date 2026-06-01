@@ -217,7 +217,7 @@ layouts.
 - [x] `load-context` — make dogfooding real
 - [x] `doc-gate` — three-layer gate (in-session hook + git commit-msg + CI), block-with-escape-hatch
 - [ ] `brainstorm` + `plan` — the front of the workflow, feeding the dissolve step
-- [ ] Bootstrap Principal's own `docs/` (self-dogfooding) as the first end-to-end test
+- [x] Bootstrap Principal's own `docs/` (self-dogfooding) — done; the repo now documents itself
 - [ ] Tune the `doc-gate` heuristic against real repos (it ships deliberately conservative)
 
 ## License

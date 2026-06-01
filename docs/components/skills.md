@@ -1,0 +1,48 @@
+---
+references:
+  - skills/reconcile-docs/SKILL.md
+  - skills/load-context/SKILL.md
+last_verified: 4a13aab
+---
+
+# Component: skills
+
+The agent-facing half of Principal — two Claude Code skills that drive the
+methodology. Each is a `SKILL.md` with `name`/`description` frontmatter; the
+folder name is the skill name, namespaced on install as `/principal:<name>`.
+
+## `reconcile-docs` — keep `/docs` true
+
+`skills/reconcile-docs/SKILL.md`. The core skill. One skill, three modes,
+auto-selected from repo state:
+
+- **Bootstrap** (`docs/` absent/empty) — explore the whole codebase, build the
+  initial knowledge base. Documents *what is*, never fabricates *why*: writes
+  one `ADR-0000` baseline rather than inventing rationale.
+- **Incremental** (a change set is in play) — reconcile affected living docs to
+  what actually shipped, and dissolve any finished plan.
+- **Sweep** (periodic, no change set) — re-run mechanical reference checks and
+  flag decayed docs.
+
+It owns the doc taxonomy (`architecture/`, `components/`, `decisions/`,
+`guides/`, `glossary.md`, the `README.md` manifest) and the living-doc
+frontmatter contract (`references`, `last_verified`).
+
+## `load-context` — read docs first
+
+`skills/load-context/SKILL.md`. The consumer. At the start of a task it reads
+the `docs/README.md` manifest, navigates to the relevant docs (never bulk-loads
+the tree), and treats them as the starting model of the system. When code
+contradicts a doc, that drift is the dogfooding signal — it's flagged for
+`reconcile-docs`.
+
+## Relationship
+
+`load-context` surfaces staleness → `reconcile-docs` fixes it. Together they are
+the consume/maintain pair at the heart of the loop (see
+[architecture/overview.md](../architecture/overview.md)).
+
+## Not yet present
+
+`brainstorm` and `plan` (the front of the workflow) are on the roadmap; see the
+root `README.md`.
