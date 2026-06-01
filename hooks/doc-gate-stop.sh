@@ -8,6 +8,10 @@
 # It fires at most once per turn — `stop_hook_active` prevents an infinite loop,
 # which is the in-session equivalent of the escape hatch.
 
+# The shared detector lives next to this script (in the plugin's hooks/ dir),
+# NOT in the user's project — resolve it relative to our own location.
+here="$(cd "$(dirname "$0")" && pwd)"
+
 input="$(cat)"
 
 # Already nudged this cycle → stand down (loop guard / implicit escape).
@@ -26,7 +30,9 @@ changes="$(
 )"
 [ -z "$changes" ] && exit 0
 
-reason="$(printf '%s\n' "$changes" | "$root/hooks/doc-gate.sh" "" 2>&1 1>/dev/null)"
+# Run from the project root so a repo-local .principal/doc-gate.conf is found.
+cd "$root" || exit 0
+reason="$(printf '%s\n' "$changes" | "$here/doc-gate.sh" "" 2>&1 1>/dev/null)"
 rc=$?
 [ "$rc" -eq 0 ] && exit 0
 

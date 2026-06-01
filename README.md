@@ -100,7 +100,9 @@ Bootstrap documents *what is*, never fabricates *why* — it writes a single
 /plugin install principal@principal
 ```
 
-Skills are then available namespaced, e.g. `/principal:reconcile-docs`.
+Skills are then available namespaced, e.g. `/principal:reconcile-docs`. This
+also wires up doc-gate's **in-session** layer automatically (via the bundled
+`hooks/hooks.json`).
 
 ### Manual
 
@@ -119,6 +121,11 @@ cp -r principal/skills/* /path/to/your-project/.claude/skills/
 
 Each skill lives at `<skills-dir>/<skill-name>/SKILL.md`; the folder name is the
 skill name.
+
+> **Manual install gives you the skills only — not the gate.** doc-gate's
+> in-session layer ships through the plugin's `hooks.json`, so a skills-only copy
+> won't enable it. To get the gate without the plugin, vendor the hook files into
+> your project as described in [doc-gate](#doc-gate) below.
 
 ---
 
@@ -161,13 +168,32 @@ deliberately conservative so it doesn't get switched off.
 **Escape hatch:** add a `docs: n/a` line to the commit/PR message to bypass
 deliberately when a doc change genuinely isn't warranted.
 
-Three layers, shared brain (`hooks/doc-gate.sh`):
+All three layers call one shared detector, `hooks/doc-gate.sh`:
 
 | Layer | Catches | Enable |
 |-------|---------|--------|
-| **In-session** (`Stop` hook) | the agent forgetting to reconcile mid-session | automatic when the plugin is installed |
-| **commit-msg** (git hook) | any local commit, human or agent | `git config core.hooksPath hooks` (or copy `hooks/commit-msg` into `.git/hooks/`) |
-| **CI** (GitHub Actions) | the actual merge — the hard gate | copy `.github/workflows/doc-gate.yml` into your repo |
+| **In-session** (`Stop` hook) | the agent forgetting to reconcile mid-session | automatic when the **plugin** is installed — nothing to vendor |
+| **commit-msg** (git hook) | any local commit, human or agent | vendor the hook files (below), then `git config core.hooksPath hooks` |
+| **CI** (GitHub Actions) | the actual merge — the hard gate | vendor the workflow + detector (below) |
+
+### Vendoring the git-hook and CI layers
+
+The in-session layer rides along with the plugin. The **commit-msg** and **CI**
+layers run inside *your* repo, so they need the detector and their entrypoints
+copied into it. Both depend on `hooks/doc-gate.sh` — copy it too, or they error.
+
+```bash
+# from a clone of this repo, run at the root of YOUR project:
+cp -r /path/to/principal/hooks ./hooks                       # doc-gate.sh + commit-msg + ...
+cp /path/to/principal/.github/workflows/doc-gate.yml ./.github/workflows/
+chmod +x hooks/doc-gate.sh hooks/commit-msg
+
+git config core.hooksPath hooks   # activate the commit-msg hook
+```
+
+(If you'd rather not move git's hooks path, copy `hooks/commit-msg` into
+`.git/hooks/` instead — but `hooks/doc-gate.sh` must still exist at the repo
+root, since the hook resolves the detector relative to the project root.)
 
 **Tuning:** drop a `.principal/doc-gate.conf` in your repo root to override any
 `DOC_GATE_*` pattern (doc paths, dependency manifests, schema globs, the ignore
