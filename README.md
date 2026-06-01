@@ -7,11 +7,11 @@ codebase's `/docs` directory as its single, living source of truth. Plans are
 treated as disposable scaffolding; the durable artifact is the documentation,
 and it is continuously reconciled against the code so it never drifts out of date.
 
-> Status: **v0.1.** The `reconcile-docs` skill is implemented. `load-context`,
-> `brainstorm`, `plan`, and the `doc-gate` hook are on the [roadmap](#roadmap).
-> This README describes the full design; what ships today is marked honestly
-> below — because a tool whose premise is *evidence over claims* shouldn't make
-> any.
+> Status: **v0.2.** `reconcile-docs`, `load-context`, and the three-layer
+> `doc-gate` are implemented. `brainstorm` and `plan` are on the
+> [roadmap](#roadmap). This README describes the full design; what ships today is
+> marked honestly below — because a tool whose premise is *evidence over claims*
+> shouldn't make any.
 
 ---
 
@@ -141,12 +141,38 @@ skill name.
      reality into the living docs, writes an ADR for the decisions, and deletes
      the spent plan
 
-4. **(Optional, when shipped) Enable the gate.** Turn on the `doc-gate` hook so
-   architectural changes can't merge without a doc update — this is what makes
-   the freshness guarantees trustworthy rather than aspirational.
+4. **Enable the gate** (see [doc-gate](#doc-gate) below) so architectural
+   changes can't ship without a doc update — this is what makes the freshness
+   guarantees trustworthy rather than aspirational.
 
 5. **(Optional) Schedule the sweep.** Run `reconcile-docs` periodically (cron,
    `/schedule`, or CI) as a janitor pass to catch drift nothing else caught.
+
+---
+
+## doc-gate
+
+The enforcement layer. It blocks a change when the **architectural surface**
+moved (a module was added/removed, a dependency manifest changed, or a
+schema/contract surface changed) but `/docs` wasn't touched. Pure modifications
+to existing source — bugfixes, refactors — never trip it; the gate is
+deliberately conservative so it doesn't get switched off.
+
+**Escape hatch:** add a `docs: n/a` line to the commit/PR message to bypass
+deliberately when a doc change genuinely isn't warranted.
+
+Three layers, shared brain (`hooks/doc-gate.sh`):
+
+| Layer | Catches | Enable |
+|-------|---------|--------|
+| **In-session** (`Stop` hook) | the agent forgetting to reconcile mid-session | automatic when the plugin is installed |
+| **commit-msg** (git hook) | any local commit, human or agent | `git config core.hooksPath hooks` (or copy `hooks/commit-msg` into `.git/hooks/`) |
+| **CI** (GitHub Actions) | the actual merge — the hard gate | copy `.github/workflows/doc-gate.yml` into your repo |
+
+**Tuning:** drop a `.principal/doc-gate.conf` in your repo root to override any
+`DOC_GATE_*` pattern (doc paths, dependency manifests, schema globs, the ignore
+list, the escape regex). The shipped defaults target common JS/TS/Python/Go/Rust
+layouts.
 
 ---
 
@@ -155,18 +181,18 @@ skill name.
 | Skill / component | Purpose | Status |
 |-------------------|---------|--------|
 | `reconcile-docs` | Bootstrap, reconcile, and sweep `/docs` against the code; dissolve finished plans | ✅ shipped |
-| `load-context` | Read the docs manifest and load relevant docs before acting (dogfooding) | 🛠 roadmap |
+| `load-context` | Read the docs manifest and load relevant docs before acting (dogfooding) | ✅ shipped |
+| `doc-gate` (hooks + CI) | Block changes where the architectural surface moved but docs didn't | ✅ shipped |
 | `brainstorm` | Refine an idea via questions and alternatives; emit a draft ADR | 🛠 roadmap |
 | `plan` | Decompose work into a transient, clearly-disposable task list | 🛠 roadmap |
-| `doc-gate` (hook) | Block merges where architecture changed but docs didn't | 🛠 roadmap |
 
 ## Roadmap
 
-- [ ] `load-context` — make dogfooding real
-- [ ] `doc-gate` hook (`hooks/hooks.json`) — make the PR-gate real; this validates the sweep's freshness assumptions
+- [x] `load-context` — make dogfooding real
+- [x] `doc-gate` — three-layer gate (in-session hook + git commit-msg + CI), block-with-escape-hatch
 - [ ] `brainstorm` + `plan` — the front of the workflow, feeding the dissolve step
 - [ ] Bootstrap Principal's own `docs/` (self-dogfooding) as the first end-to-end test
-- [ ] A reference `doc-gate` "architectural surface" heuristic that doesn't nag on trivial diffs
+- [ ] Tune the `doc-gate` heuristic against real repos (it ships deliberately conservative)
 
 ## License
 

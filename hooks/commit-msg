@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Principal doc-gate — git commit-msg hook (layer 2: catches human + agent commits).
+#
+# Install one of:
+#   git config core.hooksPath hooks          # use this repo's hooks/ dir directly
+#   ln -sf ../../hooks/commit-msg .git/hooks/commit-msg
+#   cp hooks/commit-msg .git/hooks/ && chmod +x .git/hooks/commit-msg
+#
+# $1 is the path to the prepared commit message file (provided by git).
+
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+git diff --cached --name-status | "$root/hooks/doc-gate.sh" "@$1"

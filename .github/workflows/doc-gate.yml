@@ -1,0 +1,25 @@
+name: doc-gate
+
+# Layer 3: the hard merge gate. Fails a PR whose diff changes the architectural
+# surface without touching /docs — unless a commit in the PR carries 'docs: n/a'.
+
+on:
+  pull_request:
+
+jobs:
+  doc-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Principal doc-gate
+        run: |
+          set -euo pipefail
+          base="origin/${{ github.base_ref }}"
+          git fetch origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
+          # Escape hatch: any commit message in the PR range may carry 'docs: n/a'.
+          msg="$(git log --format='%B' "$base...HEAD" 2>/dev/null || true)"
+          chmod +x hooks/doc-gate.sh
+          git diff --name-status "$base...HEAD" | ./hooks/doc-gate.sh "$msg"
