@@ -7,11 +7,10 @@ codebase's `/docs` directory as its single, living source of truth. Plans are
 treated as disposable scaffolding; the durable artifact is the documentation,
 and it is continuously reconciled against the code so it never drifts out of date.
 
-> Status: **v0.2.** `reconcile-docs`, `load-context`, and the three-layer
-> `doc-gate` are implemented. `brainstorm` and `plan` are on the
-> [roadmap](#roadmap). This README describes the full design; what ships today is
-> marked honestly below — because a tool whose premise is *evidence over claims*
-> shouldn't make any.
+> Status: **v0.3.** The full workflow is implemented — `brainstorm`, `plan`,
+> `reconcile-docs`, `load-context`, and the three-layer `doc-gate`. The repo
+> documents itself (see [`docs/`](docs/)). Remaining work is hardening, not
+> features — see the [roadmap](#roadmap).
 
 ---
 
@@ -209,16 +208,17 @@ layouts.
 | `reconcile-docs` | Bootstrap, reconcile, and sweep `/docs` against the code; dissolve finished plans | ✅ shipped |
 | `load-context` | Read the docs manifest and load relevant docs before acting (dogfooding) | ✅ shipped |
 | `doc-gate` (hooks + CI) | Block changes where the architectural surface moved but docs didn't | ✅ shipped |
-| `brainstorm` | Refine an idea via questions and alternatives; emit a draft ADR | 🛠 roadmap |
-| `plan` | Decompose work into a transient, clearly-disposable task list | 🛠 roadmap |
+| `brainstorm` | Refine an idea via questions and alternatives; emit a draft ADR | ✅ shipped |
+| `plan` | Decompose work into a transient, clearly-disposable (gitignored) task list | ✅ shipped |
 
 ## Roadmap
 
 - [x] `load-context` — make dogfooding real
 - [x] `doc-gate` — three-layer gate (in-session hook + git commit-msg + CI), block-with-escape-hatch
-- [ ] `brainstorm` + `plan` — the front of the workflow, feeding the dissolve step
+- [x] `brainstorm` + `plan` — the front of the workflow, feeding the dissolve step
 - [x] Bootstrap Principal's own `docs/` (self-dogfooding) — done; the repo now documents itself
 - [ ] Tune the `doc-gate` heuristic against real repos (it ships deliberately conservative)
+- [ ] Wire an execution/TDD skill (adapt superpowers' RED-GREEN-REFACTOR) between `plan` and `reconcile-docs`
 
 ## License
 

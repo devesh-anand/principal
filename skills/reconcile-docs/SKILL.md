@@ -87,10 +87,15 @@ code itself.
 4. **Synthesize architecture** (`architecture/`): how the components connect,
    the main data/control flows, and invariants — but **mark every invariant you
    infer but cannot prove as `inferred, unverified`.**
-5. **Do NOT fabricate ADRs.** Pre-existing rationale is usually unknowable.
-   Write exactly one record — `decisions/ADR-0000-baseline.md` — stating the
-   knowledge base was bootstrapped on this date from this commit, and that prior
-   decisions are undocumented.
+5. **Never *invent* ADRs — but capture *attestable* ones.** Always write
+   `decisions/ADR-0000-baseline.md`, stating the knowledge base was bootstrapped
+   on this date from this commit and that prior decisions are otherwise
+   undocumented. For foreign code whose rationale you cannot verify, stop there —
+   reconstructed "why" is fabrication. **But** if the operator can genuinely
+   attest to specific decisions and their reasoning (e.g. they just designed the
+   code in this session), you MAY seed those as additional ADRs (`ADR-0001`, …).
+   The test is attestation, not convenience: record rationale that is *known*,
+   never rationale that is *guessed*.
 6. **Write the manifest** (`docs/README.md`): one navigable line per doc.
 7. **Stamp** `references` + `last_verified: <HEAD sha>` on every living doc.
 

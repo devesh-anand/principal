@@ -36,13 +36,26 @@ the tree), and treats them as the starting model of the system. When code
 contradicts a doc, that drift is the dogfooding signal — it's flagged for
 `reconcile-docs`.
 
-## Relationship
+## `brainstorm` — refine an idea into a decision
 
-`load-context` surfaces staleness → `reconcile-docs` fixes it. Together they are
-the consume/maintain pair at the heart of the loop (see
-[architecture/overview.md](../architecture/overview.md)).
+`skills/brainstorm/SKILL.md`. The front of the workflow. Orients via
+`load-context`, asks the questions that change the answer, explores real
+alternatives, and validates the design in sections. Its output is
+**decision-shaped**: a *draft* ADR (status `proposed`) capturing the choice, the
+rejected alternatives and why, and a forward-pointer to the living docs the work
+will touch. Hands off to `plan`.
 
-## Not yet present
+## `plan` — transient execution scaffolding
 
-`brainstorm` and `plan` (the front of the workflow) are on the roadmap; see the
-root `README.md`.
+`skills/plan/SKILL.md`. Decomposes the validated design into bite-sized tasks
+with file paths and verification steps, written to `.principal/plans/<slug>.md`
+— **gitignored, never committed, never knowledge**. On completion,
+`reconcile-docs` dissolves it: the ADR is finalized, living docs updated, and the
+plan file deleted. See [ADR-0001](../decisions/ADR-0001-workflow-front.md).
+
+## Relationship — the full loop
+
+`brainstorm` (decision) → `plan` (transient tasks) → execute → `reconcile-docs`
+(dissolve: finalize ADR, update living docs, delete plan). `load-context`
+surfaces staleness → `reconcile-docs` fixes it. See
+[architecture/overview.md](../architecture/overview.md).
