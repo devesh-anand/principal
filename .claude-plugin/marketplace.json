@@ -1,0 +1,14 @@
+{
+  "name": "principal",
+  "description": "Principal — docs-as-living-knowledge-base methodology for Claude Code.",
+  "owner": {
+    "name": "Devesh Anand"
+  },
+  "plugins": [
+    {
+      "name": "principal",
+      "source": "./",
+      "description": "Docs-as-living-knowledge-base methodology for Claude Code."
+    }
+  ]
+}

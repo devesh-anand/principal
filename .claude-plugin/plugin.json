@@ -1,0 +1,9 @@
+{
+  "name": "principal",
+  "description": "Docs-as-living-knowledge-base methodology for Claude Code. Plans dissolve into /docs; the docs stay true to the code so any agent inherits the context of a principal engineer.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Devesh Anand",
+    "email": "devesh.anand@refold.ai"
+  }
+}
