@@ -4,7 +4,7 @@ references:
   - skills/load-context/SKILL.md
   - hooks/doc-gate.sh
   - .claude-plugin/plugin.json
-last_verified: 4a13aab
+last_verified: caf16cd
 ---
 
 # Architecture overview

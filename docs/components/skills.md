@@ -2,7 +2,7 @@
 references:
   - skills/reconcile-docs/SKILL.md
   - skills/load-context/SKILL.md
-last_verified: 4a13aab
+last_verified: caf16cd
 ---
 
 # Component: skills
