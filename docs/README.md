@@ -11,6 +11,7 @@ navigate to the doc you need — don't bulk-load the tree. Maintained by
 ## Components
 - [components/skills.md](components/skills.md) — the agent-facing skills (`reconcile-docs`, `load-context`, `brainstorm`, `plan`) and the full loop.
 - [components/doc-gate.md](components/doc-gate.md) — the shared detector + three enforcement layers (in-session / commit-msg / CI).
+- [components/docs-check.md](components/docs-check.md) — the mechanical verifier: references resolve, decay, coverage.
 - [components/packaging.md](components/packaging.md) — plugin manifests, install paths, the `"./"` source gotcha.
 
 ## Decisions (immutable)

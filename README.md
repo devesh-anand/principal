@@ -70,10 +70,11 @@ independent forcing functions:
 2. **PR-gate** — a `doc-gate` hook blocks a merge when an architectural change
    ships with no corresponding doc update.
 3. **Verifiable docs** — every living doc declares the files/symbols it
-   describes; a mechanical check fails when those references break (catching
+   describes; `bin/docs-check.sh` fails when those references break (catching
    renames and moves, the #1 source of silent drift).
-4. **Periodic sweep** — a janitor pass re-verifies references and flags decay on
-   a timer, backstopping whatever the other three missed.
+4. **Periodic sweep** — `bin/docs-check.sh` run on a timer (or in CI) re-verifies
+   references, flags decay, and reports coverage gaps, backstopping whatever the
+   other three missed.
 
 ### The heart: `reconcile-docs`
 
@@ -151,8 +152,9 @@ skill name.
    changes can't ship without a doc update — this is what makes the freshness
    guarantees trustworthy rather than aspirational.
 
-5. **(Optional) Schedule the sweep.** Run `reconcile-docs` periodically (cron,
-   `/schedule`, or CI) as a janitor pass to catch drift nothing else caught.
+5. **(Optional) Schedule the sweep.** Run `bin/docs-check.sh` periodically (cron,
+   `/schedule`, or the bundled `.github/workflows/docs-check.yml`) as a janitor
+   pass; reconcile whatever it flags as decayed.
 
 ---
 
@@ -184,8 +186,11 @@ copied into it. Both depend on `hooks/doc-gate.sh` — copy it too, or they erro
 ```bash
 # from a clone of this repo, run at the root of YOUR project:
 cp -r /path/to/principal/hooks ./hooks                       # doc-gate.sh + commit-msg + ...
-cp /path/to/principal/.github/workflows/doc-gate.yml ./.github/workflows/
-chmod +x hooks/doc-gate.sh hooks/commit-msg
+cp -r /path/to/principal/bin   ./bin                         # docs-check.sh
+mkdir -p .github/workflows
+cp /path/to/principal/.github/workflows/doc-gate.yml   ./.github/workflows/
+cp /path/to/principal/.github/workflows/docs-check.yml ./.github/workflows/
+chmod +x hooks/doc-gate.sh hooks/commit-msg bin/docs-check.sh
 
 git config core.hooksPath hooks   # activate the commit-msg hook
 ```
@@ -208,6 +213,7 @@ layouts.
 | `reconcile-docs` | Bootstrap, reconcile, and sweep `/docs` against the code; dissolve finished plans | ✅ shipped |
 | `load-context` | Read the docs manifest and load relevant docs before acting (dogfooding) | ✅ shipped |
 | `doc-gate` (hooks + CI) | Block changes where the architectural surface moved but docs didn't | ✅ shipped |
+| `docs-check` (`bin/` + CI) | Verify references resolve, detect decay, flag coverage gaps | ✅ shipped |
 | `brainstorm` | Refine an idea via questions and alternatives; emit a draft ADR | ✅ shipped |
 | `plan` | Decompose work into a transient, clearly-disposable (gitignored) task list | ✅ shipped |
 

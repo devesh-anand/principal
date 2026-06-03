@@ -22,8 +22,9 @@ and JSON manifests that make it installable.
 
 | Component | What it is | Doc |
 |-----------|-----------|-----|
-| **skills** | The agent-facing methodology: `reconcile-docs` (keeps docs true) and `load-context` (reads docs first). | [components/skills.md](../components/skills.md) |
-| **doc-gate** | The enforcement subsystem: one detector behind three layers (in-session hook, git commit-msg, CI). | [components/doc-gate.md](../components/doc-gate.md) |
+| **skills** | The agent-facing methodology: `brainstorm`, `plan`, `reconcile-docs`, `load-context`. | [components/skills.md](../components/skills.md) |
+| **doc-gate** | The diff-side enforcer: one detector behind three layers (in-session hook, git commit-msg, CI). | [components/doc-gate.md](../components/doc-gate.md) |
+| **docs-check** | The docs-side verifier: `bin/docs-check.sh` checks references resolve, detects decay, flags coverage. | [components/docs-check.md](../components/docs-check.md) |
 | **packaging** | The `.claude-plugin/` manifests that distribute and install Principal. | [components/packaging.md](../components/packaging.md) |
 
 ## How they connect — the Principal loop
@@ -55,8 +56,9 @@ load-context ─▶ work (brainstorm → plan → execute) ─▶ reconcile-docs
   docs (`decisions/` ADRs) are append-only — a wrong ADR is superseded by a new
   one, never edited.
 - **Four forcing functions keep docs honest:** dogfooding (`load-context`), the
-  PR-gate (`doc-gate`), verifiable references (`references` + `last_verified`
-  frontmatter), and the periodic sweep. They are independent nets.
+  PR-gate (`doc-gate`), verifiable references (`bin/docs-check.sh` over the
+  `references` + `last_verified` frontmatter), and the periodic sweep (also
+  `docs-check`). They are independent nets.
 - **The gate is deliberately conservative.** It fires only on high-confidence
   architectural signals so it never nags on bugfixes — a gate that annoys gets
   switched off, and a switched-off gate protects nothing.

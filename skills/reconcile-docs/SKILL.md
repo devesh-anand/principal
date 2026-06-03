@@ -141,15 +141,20 @@ finished executing).
 No change set; auditing the whole knowledge base. The backstop net for drift
 that the gate and dogfooding missed.
 
+Steps 1–3 are mechanical and shipped as `bin/docs-check.sh` — run it to get the
+report rather than re-deriving it by hand:
+
 1. **Mechanical ref check.** For every living doc, confirm each path/symbol in
    `references` still exists. Broken ref → flag (this catches renames/moves, the
-   #1 source of silent drift).
+   #1 source of silent drift). *(docs-check: `ERROR`, exit 1.)*
 2. **Decay scan.** For every living doc, compare `last_verified` against the
    current state of its referenced files. Files changed since that sha →
-   the doc is *decayed* → queue it for an incremental reconcile.
+   the doc is *decayed* → queue it for an incremental reconcile. *(docs-check:
+   `DECAY`.)*
 3. **Coverage gap.** Look for subsystems with code but no `components/` doc.
-4. **Report, then reconcile.** Surface the list (broken / decayed / uncovered),
-   then run incremental reconcile over the queue.
+   *(docs-check: `COVER`, heuristic.)*
+4. **Report, then reconcile.** Run `bin/docs-check.sh` for steps 1–3, then run
+   incremental reconcile over the flagged docs.
 
 The sweep never invents ADRs and never edits immutable docs.
 

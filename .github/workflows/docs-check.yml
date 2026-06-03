@@ -1,0 +1,22 @@
+name: docs-check
+
+# Mechanical verification of the /docs knowledge base: broken references fail the
+# build; decay and coverage are reported as warnings. This is the CI face of the
+# sweep — the verifiable-refs forcing function, automated.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so last_verified shas resolve (decay check)
+
+      - name: Principal docs-check
+        run: |
+          chmod +x bin/docs-check.sh
+          bin/docs-check.sh
