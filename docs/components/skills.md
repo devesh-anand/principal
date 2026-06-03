@@ -2,7 +2,9 @@
 references:
   - skills/reconcile-docs/SKILL.md
   - skills/load-context/SKILL.md
-last_verified: caf16cd
+  - skills/brainstorm/SKILL.md
+  - skills/plan/SKILL.md
+last_verified: 393fa20
 ---
 
 # Component: skills

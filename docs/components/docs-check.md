@@ -2,7 +2,7 @@
 references:
   - bin/docs-check.sh
   - .github/workflows/docs-check.yml
-last_verified: bfbbefd
+last_verified: 393fa20
 ---
 
 # Component: docs-check
